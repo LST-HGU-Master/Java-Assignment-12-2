@@ -18,14 +18,23 @@
 |-----------------|----------|--------|--------|
 | getReactionTime | Date now | String | public | 
 
-### ProgC2.java (提出不要)
+### ProgC2.java (変更・提出不要)
 ```java
+import java.util.Date;
 
+public class ProgC2 {
+
+    public static void main(String[] args) {
+        Observation o = new Observation();
+        o.waitHour = 31;
+        Date now = new Date();
+        System.out.println(o.getReactionTime(now));
+    }
+
+}
 ```
 
-
-### Run command
-`gradle test`
-
-### Notes
-- The JDK is installed on GitHub Actions machines, so you're also able to directly invoke `javac`, `java`, or any other CLI command included in the JDK. 
+### 実行例 （7月2日11時22分05秒 にプログラムを起動した場合）
+```
+7/3 18時22分05秒
+```
