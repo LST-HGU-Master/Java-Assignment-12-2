@@ -1,0 +1,60 @@
+name: Autograding Tests
+'on':
+- workflow_dispatch
+- repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: Set up JDK 21
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
+    - name: testWaitHour
+      id: testwaithour
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: testWaitHour
+        setup-command: ''
+        command: sudo locale-gen ja_JP.UTF-8 && export LANG=ja_JP.UTF-8 && sudo update-locale
+          && gradle test --tests "ObservationTest.testWaitHour"
+        timeout: 10
+        max-score: 5
+    - name: testGetReactionTimeFormat
+      id: testgetreactiontimeformat
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: testGetReactionTimeFormat
+        setup-command: ''
+        command: sudo locale-gen ja_JP.UTF-8 && export LANG=ja_JP.UTF-8 && export
+          TZ=Asia/Tokyo && sudo update-locale && gradle test --tests "ObservationTest.testGetReactionTimeFormat"
+        timeout: 10
+        max-score: 5
+    - name: testGetReactionTime
+      id: testgetreactiontime
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: testGetReactionTime
+        setup-command: ''
+        command: sudo locale-gen ja_JP.UTF-8 && export LANG=ja_JP.UTF-8 && export
+          TZ=Asia/Tokyo && sudo update-locale && gradle test --tests "ObservationTest.testGetReactionTime"
+        timeout: 10
+        max-score: 5
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      env:
+        TESTWAITHOUR_RESULTS: "${{steps.testwaithour.outputs.result}}"
+        TESTGETREACTIONTIMEFORMAT_RESULTS: "${{steps.testgetreactiontimeformat.outputs.result}}"
+        TESTGETREACTIONTIME_RESULTS: "${{steps.testgetreactiontime.outputs.result}}"
+      with:
+        runners: testwaithour,testgetreactiontimeformat,testgetreactiontime
